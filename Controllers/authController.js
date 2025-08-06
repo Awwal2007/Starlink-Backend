@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken")
 const userModel = require("../Models/user")
 const sendVerificationEmail = require("../Services/Nodemailer/sendVerificationEmail")
 const generateRandomString = require("../Utils/generateRandomStrings")
-const { MongooseError } = require("mongoose")
 
 //Signup
 const signup = async (req, res, next)=>{
@@ -36,10 +35,6 @@ const signup = async (req, res, next)=>{
 
     } catch (error) {
         console.log(error)
-        const err = new MongooseError(message)
-        {err && res.status(401).json({
-            status: "error",
-            message: err.message})}
         next(error)      
     }
 }
@@ -74,10 +69,6 @@ const adminSignUp = async (req, res, next)=>{
 
     } catch (error) {
         console.log(error)
-        const err = new MongooseError(message)
-        {err && res.status(401).json({
-            status: "error",
-            message: err.message})}
         next(error)      
     }
 }
@@ -160,7 +151,6 @@ const login = async (req, res, next)=>{
         })
     } catch (error) {
         console.log(error);
-        res.send(error)
         next(error) 
     }
 }
