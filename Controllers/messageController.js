@@ -23,39 +23,13 @@ const createUserMessage = async (req, res, next) => {
 };
 
 // Get all messages (admin or support role ideally)
-const getAllAdminMessagesFromAdmin = async (req, res, next) => {
-  const userId = req.params.userId;
+const getAllMessages = async (req, res, next) => {
   try {
-    const messages = await Message.find({sender: "user", userId: userId}).sort({ createdAt: -1 });
-    if(!messages){
-      return res.status(400).json({
-        status: "success",
-        message: "No message found",
-      })
-    }
+    const messages = await Message.find({sender: "user"}).sort({ createdAt: -1 });
+
     res.status(200).json({
       status: "success",
-      message: messages.length > 0 ? "Admin messages loaded" : "No message sent yet",
-      data: messages
-    });
-  } catch (error) {
-    console.error("Get All Messages Error:", error);
-    res.send(error)
-    next(error);
-  }
-};
-const getAllUserMessages = async (req, res, next) => {
-  try {
-    const messages = await Message.find({sender: "user", }).sort({ createdAt: -1 });
-    if(!messages){
-      return res.status(400).json({
-        status: "success",
-        message: "No message found",
-      })
-    }
-    res.status(200).json({
-      status: "success",
-      message: messages.length > 0 ? "Admin messages loaded" : "No message sent yet",
+      message: "All messages fetched successfully",
       data: messages
     });
   } catch (error) {
@@ -98,7 +72,7 @@ const getUserMessageFromAdmin = async (req, res, next) => {
 // Get messages for the logged-in user
 const getMyMessages = async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.user?._id;
     const messages = await Message.find({ userId: userId }).sort({ createdAt: 1 });
     if (!userId) {
       return res.status(400).json({
@@ -121,7 +95,7 @@ const getMyMessages = async (req, res, next) => {
 const getAdminMessages = async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const messages = await Message.find({ sender: "admin", replyTo: userId  }).sort({ createdAt: -1 });
+    const messages = await Message.find({ sender: "admin",  }).sort({ createdAt: -1 });
 
     if(!messages){
         return res.status(404).json({
@@ -176,10 +150,9 @@ const replyToUserMessage = async (req, res, next) => {
 
 module.exports = {
   createUserMessage,
-  getAllAdminMessagesFromAdmin,
+  getAllMessages,
   getMyMessages,
   getAdminMessages,
   replyToUserMessage,
-  getUserMessageFromAdmin,
-  getAllUserMessages
+  getUserMessageFromAdmin
 };
