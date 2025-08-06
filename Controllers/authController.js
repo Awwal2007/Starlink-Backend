@@ -144,10 +144,18 @@ const login = async (req, res, next)=>{
             expiresIn: process.env.jwt_exp
         })        
 
+        const userData = {
+            _id: user._id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+            isVerified: user.isVerified
+        }
+
         res.status(200).json({
             status: "success",
             message: "Login successfully. Welcome back",
-            user,
+            user: userData,
             accessToken
         })
     } catch (error) {
