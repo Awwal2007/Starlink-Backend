@@ -36,6 +36,10 @@ const signup = async (req, res, next)=>{
 
     } catch (error) {
         console.log(error)
+        const err = new MongooseError(message)
+        {err && res.status(401).json({
+            status: "error",
+            message: err.message})}
         next(error)      
     }
 }
@@ -71,6 +75,9 @@ const adminSignUp = async (req, res, next)=>{
     } catch (error) {
         console.log(error)
         const err = new MongooseError(message)
+        {err && res.status(401).json({
+            status: "error",
+            message: err.message})}
         next(error)      
     }
 }
@@ -135,23 +142,17 @@ const login = async (req, res, next)=>{
 
         const accessToken = jwt.sign({id: user._id, email: user.email, name: user.name, role: user.role}, process.env.jwt_secret, {
             expiresIn: process.env.jwt_exp
-        })
-        const userData = {
-            _id: user._id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            isVerified: user.isVerified
-        }
+        })        
 
         res.status(200).json({
             status: "success",
             message: "Login successfully. Welcome back",
-            user: userData,
+            user,
             accessToken
         })
     } catch (error) {
         console.log(error);
+        res.send(error)
         next(error) 
     }
 }
@@ -183,24 +184,16 @@ const adminLogin = async (req, res, next)=>{
 
         const accessToken = jwt.sign({id: user._id, email: user.email, name: user.name}, process.env.jwt_secret, {
             expiresIn: process.env.jwt_exp
-        })
-        
-        const userData = {
-            _id: user._id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-            isVerified: user.isVerified
-        }
+        })        
 
         res.status(200).json({
             status: "success",
             message: "Login successfully. Welcome back",
-            accessToken,
-            user: userData
+            accessToken
         })
     } catch (error) {
         console.log(error);
+        res.send(error)
         next(error) 
     }
 }
